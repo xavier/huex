@@ -1,8 +1,11 @@
 defmodule Huex.Color do
 
-  @doc """
+  @typedoc """
+  Tuple containing respectively the red, greend and blue components of a color, each between 0 and 1
+  """
+  @type rgb_color :: {float, float, float}
 
-  [WIP]
+  @doc """
 
   Converts from normalized RGB (each component must be in the 0.0 to 1.0 range) Philips Hue XY colorspace
 
@@ -48,7 +51,10 @@ defmodule Huex.Color do
   #     float y = Y / (X + Y + Z);
   #
 
+  @spec rgb(float, float, float) :: Huex.xy_color
   def rgb(r, g, b), do: rgb_to_xy({r, g, b})
+
+  @spec rgb(rgb_color) :: Huex.xy_color
   def rgb(rgb),     do: rgb_to_xy(rgb)
 
   defp rgb_to_xy(r, g, b),  do: rgb_to_xy({r, g, b})
