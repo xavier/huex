@@ -95,7 +95,7 @@ defmodule Huex do
   end
 
   @doc """
-  Lists the lights conneted to the given `bridge`.
+  Lists the lights connected to the given `bridge`.
   Requires the connection to be authorized.
   """
   @spec lights(bridge) :: Map.t
