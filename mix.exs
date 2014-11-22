@@ -3,11 +3,13 @@ defmodule Huex.Mixfile do
 
   def project do
     [app: :huex,
-     version: "0.1.0",
+     version: "0.1.1",
      elixir: "~> 1.0",
      deps: deps,
      description: description,
-     package: package]
+     package: package,
+     source_url: "https://github.com/xavier/huex",
+     homepage_url: "https://github.com/xavier/huex"]
   end
 
   # Configuration for the OTP application
@@ -29,7 +31,9 @@ defmodule Huex.Mixfile do
   defp deps do
     [
       {:httpoison, "~> 0.5"},
-      {:json, "~> 0.3.0"}
+      {:json, "~> 0.3.0"},
+      {:earmark, "~> 0.1", only: :dev},
+      {:ex_doc, "~> 0.6", only: :dev}
     ]
   end
 

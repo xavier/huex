@@ -2,13 +2,20 @@ defmodule Huex do
 
   @moduledoc """
 
-  Most functions return a `Bridge` struct in order to be pipeline friendly
+  ## Elixir client for Philips Hue connected light bulbs.
+
+  Query functions return the response from the API.
+
+  Command functions return a `Bridge` struct in order to be pipeline friendly.
+
+  Read more on the [GitHub page](https://github.com/xavier/huex).
 
   """
 
   # Public API
 
   defmodule Bridge do
+    @moduledoc false
     defstruct host: nil, username: nil, status: :ok, error: nil
   end
 
@@ -122,9 +129,11 @@ defmodule Huex do
   # URLs
   #
 
+
   defp light_state_url(bridge, light), do: light_url(bridge, light) <> "/state"
   defp light_url(bridge, light), do: lights_url(bridge) <> "/#{light}"
   defp lights_url(bridge), do: user_api_url(bridge, "lights")
+
 
   defp user_api_url(bridge, relative_path), do: user_api_url(bridge) <> "/#{relative_path}"
   defp user_api_url(%Bridge{username: username} = bridge), do: api_url(bridge, username)
@@ -156,8 +165,8 @@ defmodule Huex do
   end
 
   # TODO FIXME figure out why HTTPoison always treat the response as an error
-  def handle_response({:ok, response}), do: decode_response_body(response.body)
-  def handle_response({:error, %HTTPoison.Error{id: nil, reason: {:closed, body}}}), do: decode_response_body(body)
+  defp handle_response({:ok, response}), do: decode_response_body(response.body)
+  defp handle_response({:error, %HTTPoison.Error{id: nil, reason: {:closed, body}}}), do: decode_response_body(body)
 
   defp decode_response_body(body) do
     {:ok, object} = JSON.decode(body)
