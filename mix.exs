@@ -3,9 +3,11 @@ defmodule Huex.Mixfile do
 
   def project do
     [app: :huex,
-     version: "0.0.1",
+     version: "0.1.0",
      elixir: "~> 1.0",
-     deps: deps]
+     deps: deps,
+     description: description,
+     package: package]
   end
 
   # Configuration for the OTP application
