@@ -25,9 +25,22 @@ defmodule Huex.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    [ 
+    [
       {:httpoison, "~> 0.5"},
       {:json, "~> 0.3.0"}
     ]
+  end
+
+  defp description do
+    "Elixir client for Philips Hue connected light bulbs"
+  end
+
+  defp package do
+    [
+     files: ["lib", "priv", "mix.exs", "README*", "LICENSE*", "examples"],
+     contributors: ["Xavier Defrang"],
+     licenses: ["Apache 2.0"],
+     links: %{"GitHub" => "https://github.com/xavier/huex"}
+   ]
   end
 end
