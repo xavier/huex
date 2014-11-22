@@ -91,7 +91,7 @@ defmodule Huex do
   """
   @spec info(bridge) :: Map.t
   def info(bridge) do
-    bridge |> user_api_url |> get_json |> update_bridge(bridge)
+    bridge |> user_api_url |> get_json
   end
 
   @doc """
@@ -100,7 +100,7 @@ defmodule Huex do
   """
   @spec lights(bridge) :: Map.t
   def lights(bridge) do
-    bridge |> lights_url |> get_json |> update_bridge(bridge)
+    bridge |> lights_url |> get_json
   end
 
   @doc """
@@ -109,7 +109,7 @@ defmodule Huex do
   """
   @spec light_info(bridge, light) :: Map.t
   def light_info(bridge, light) do
-    bridge |> light_url(light) |> get_json |> update_bridge(bridge)
+    bridge |> light_url(light) |> get_json
   end
 
   @doc """
