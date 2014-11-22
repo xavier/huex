@@ -9,7 +9,7 @@ defmodule Huex do
   # Public API
 
   defmodule Bridge do
-    defstruct host: nil, username: nil, status: :ok
+    defstruct host: nil, username: nil, status: :ok, error: nil
   end
 
   @doc """
@@ -33,7 +33,7 @@ defmodule Huex do
   """
   def authorize(bridge, username) do
     payload = %{devicetype: "test user", username: username}
-    bridge |> api_url |> post_json(payload)
+    bridge = bridge |> api_url |> post_json(payload) |> update_bridge(bridge)
     %Bridge{bridge | username: username}
   end
 
@@ -41,7 +41,7 @@ defmodule Huex do
   Fetch all informations available in the `bridge`.
   """
   def info(bridge) do
-    bridge |> user_api_url |> get_json
+    bridge |> user_api_url |> get_json |> update_bridge(bridge)
   end
 
   @doc """
@@ -49,7 +49,7 @@ defmodule Huex do
   Requires the connection to be authorized.
   """
   def lights(bridge) do
-    bridge |> lights_url |> get_json
+    bridge |> lights_url |> get_json |> update_bridge(bridge)
   end
 
   @doc """
@@ -57,7 +57,7 @@ defmodule Huex do
   Requires the connection to be authorized.
   """
   def light_info(bridge, light) do
-    bridge |> light_url(light) |> get_json
+    bridge |> light_url(light) |> get_json |> update_bridge(bridge)
   end
 
   @doc """
@@ -105,11 +105,18 @@ defmodule Huex do
   Requires the connection to be authorized.
   """
   def set_state(bridge, light, new_state) do
-    bridge |> light_state_url(light) |> put_json(new_state)
-    bridge
+    bridge |> light_state_url(light) |> put_json(new_state) |> update_bridge(bridge)
   end
 
   # Private API
+
+  #
+  # Keep track of errors in chainable operations
+  #
+
+  # TODO check whether we can possibly receive more than one object in the array
+  defp update_bridge([%{"success" => _}], bridge),          do: %Bridge{bridge | status: :ok, error: nil}
+  defp update_bridge([%{"error" => _} = response], bridge), do: %Bridge{bridge | status: :error, error: response}
 
   #
   # URLs

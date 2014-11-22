@@ -84,5 +84,4 @@ Colorspace conversion from RGB to XY currently feels a little fishy: I can't see
 ## To Do
 
 [ ] Reliable color conversion from RGB
-[ ] Improve HTTP and API error handling
 [ ] Hex package
