@@ -92,7 +92,6 @@ Color space conversion from RGB to XY currently feels a little fishy: I can't se
 ## To Do
 
 - [ ] Reliable color conversion from RGB
-- [ ] Hex package
 
 ## License
 
