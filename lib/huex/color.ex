@@ -57,8 +57,8 @@ defmodule Huex.Color do
   @spec rgb(rgb_color) :: Huex.xy_color
   def rgb(rgb),     do: rgb_to_xy(rgb)
 
-  defp rgb_to_xy(r, g, b),  do: rgb_to_xy({r, g, b})
-  defp rgb_to_xy(rgb_tuple) do
+  def rgb_to_xy(r, g, b),  do: rgb_to_xy({r, g, b})
+  def rgb_to_xy(rgb_tuple) do
     rgb_tuple |> correct_gamma |> rgb_to_xyz |> xyz_to_xy
   end
 
@@ -86,5 +86,46 @@ defmodule Huex.Color do
     sum = x + y + z
     {x / sum, y / sum}
   end
+
+  #
+  #
+
+  def rgb_to_hsv(r, g, b),  do: rgb_to_hsv({r, g, b})
+  def rgb_to_hsv(rgb_tuple) do
+    rgb_tuple |> rgb_to_normalized_hsv |> adjust_hsv
+  end
+
+  defp adjust_hsv({h, s, v}) do
+    h = round(h * 65536 / 360)
+    s = round(s * 255)
+    v = round(v * 255)
+    {h, s, v}
+  end
+
+  defp rgb_to_normalized_hsv({r, g, b}) do
+    {min, max} = minmax(r, g, b)
+    if max > 0 do
+      delta = max - min
+      h = case max do
+            ^r ->     (g - b) / delta
+            ^g -> 2 + (b - r) / delta
+            ^b -> 4 + (r - g) / delta
+          end
+      s = delta / max
+      v = max
+      {h_to_degrees(h), s, v}
+    else
+      {0, 0, 0}
+    end
+  end
+
+  defp minmax(r, g, b) do
+    min = Kernel.min(r, Kernel.min(g, b))
+    max = Kernel.max(r, Kernel.max(g, b))
+    {min, max}
+  end
+
+  defp h_to_degrees(h) when h < 0, do: (h * 60) + 360
+  defp h_to_degrees(h),            do:  h * 60
 
 end
