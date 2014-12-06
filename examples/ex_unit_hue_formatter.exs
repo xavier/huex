@@ -66,7 +66,10 @@ end
 # Demo
 #
 
-ExUnit.start formatters: [ExUnitHueFormatter], bridge: Huex.connect("192.168.1.100", "huexexamples")
+bridge_host = System.get_env("HUEX_HOST") || "192.168.1.100"
+bridge_user = System.get_env("HUEX_USER") || "huexexamples"
+
+ExUnit.start formatters: [ExUnitHueFormatter], bridge: Huex.connect(bridge_host, bridge_user), light: 1
 
 defmodule HueTest do
   use ExUnit.Case

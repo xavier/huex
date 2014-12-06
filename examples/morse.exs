@@ -95,7 +95,10 @@ end
 # Demo
 #
 
-bridge = Huex.connect("192.168.1.100", "huexexamples")
+bridge_host = System.get_env("HUEX_HOST") || "192.168.1.100"
+bridge_user = System.get_env("HUEX_USER") || "huexexamples"
+
+bridge = Huex.connect(bridge_host, bridge_user)
 blinker = {bridge, 1}
 
 Morse.transmit("SOS", blinker)
