@@ -122,6 +122,15 @@ defmodule Huex do
   end
 
   @doc """
+  Turns the given light on using the given transition time (in ms).
+  Requires the connection to be authorized.
+  """
+  @spec turn_on(bridge, light, non_neg_integer) :: bridge
+  def turn_on(bridge, light, transition_time_ms) do
+    bridge |> set_state(light, %{on: true, transitiontime: transition_time(transition_time_ms)})
+  end
+
+  @doc """
   Turns the given light off.
   Requires the connection to be authorized.
   """
@@ -131,10 +140,18 @@ defmodule Huex do
   end
 
   @doc """
+  Turns the given light off using the given transition time (in ms).
+  Requires the connection to be authorized.
+  """
+  @spec turn_off(bridge, light, non_neg_integer) :: bridge
+  def turn_off(bridge, light, transition_time_ms) do
+    bridge |> set_state(light, %{on: false, transitiontime: transition_time(transition_time_ms)})
+  end
+
+  @doc """
   Sets the color (hue, saturation and brillance) of the given light.
   Requires the connection to be authorized.
   """
-
   @spec set_color(bridge, light, hsv_color) :: bridge
   def set_color(bridge, light, {h, s, v}) do
     bridge |> set_state(light, %{on: true, hue: h, sat: s, bri: v})
@@ -150,12 +167,39 @@ defmodule Huex do
   end
 
   @doc """
+  Sets the color (hue, saturation and brillance) of the given light using the given transition time (in ms).
+  Requires the connection to be authorized.
+  """
+  @spec set_color(bridge, light, hsv_color, non_neg_integer) :: bridge
+  def set_color(bridge, light, {h, s, v}, transition_time_ms) do
+    bridge |> set_state(light, %{on: true, hue: h, sat: s, bri: v, transitiontime: transition_time(transition_time_ms)})
+  end
+
+  @doc """
+  Sets the color of the given light using Philips' proprietary bi-dimensional color space using the given transition time (in ms).
+  Requires the connection to be authorized.
+  """
+  @spec set_color(bridge, light, xy_color, non_neg_integer) :: bridge
+  def set_color(bridge, light, {x, y}, transition_time_ms) do
+    bridge |> set_state(light, %{on: true, xy: [x, y], transitiontime: transition_time(transition_time_ms)})
+  end
+
+  @doc """
   Sets the brigthness of the given light (a value between 0 and 1).
   Requires the connection to be authorized.
   """
   @spec set_brightness(bridge, light, float) :: bridge
   def set_brightness(bridge, light, brightness) do
     bridge |> set_state(light, %{on: true, bri: round(brightness * 255.0)})
+  end
+
+  @doc """
+  Sets the brigthness of the given light (a value between 0 and 1) using the given transition time (in ms).
+  Requires the connection to be authorized.
+  """
+  @spec set_brightness(bridge, light, float, non_neg_integer) :: bridge
+  def set_brightness(bridge, light, brightness, transition_time_ms) do
+    bridge |> set_state(light, %{on: true, bri: round(brightness * 255.0), transitiontime: transition_time(transition_time_ms)})
   end
 
   @doc """
@@ -225,5 +269,11 @@ defmodule Huex do
     {:ok, object} = JSON.decode(body)
     object
   end
+
+  #
+  # Miscellaneous helpers
+  #
+
+  defp transition_time(ms), do: div(ms, 100)
 
 end

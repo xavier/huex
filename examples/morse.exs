@@ -80,8 +80,10 @@ defmodule Morse do
     wait(unit_duration)
   end
 
-  defp on({bridge, light}),  do: Huex.turn_on(bridge, light)
-  defp off({bridge, light}), do: Huex.turn_off(bridge, light)
+  @transition_time 0
+
+  defp on({bridge, light}),  do: bridge |> Huex.turn_on(light, @transition_time)
+  defp off({bridge, light}), do: bridge |> Huex.turn_off(light, @transition_time)
 
   defp wait(unit_duration),      do: :timer.sleep(unit_duration)
   defp wait(".", unit_duration), do: wait(unit_duration)
@@ -98,7 +100,9 @@ end
 bridge_host = System.get_env("HUEX_HOST") || "192.168.1.100"
 bridge_user = System.get_env("HUEX_USER") || "huexexamples"
 
+light = 1
+
 bridge = Huex.connect(bridge_host, bridge_user)
-blinker = {bridge, 1}
+blinker = {bridge, light}
 
 Morse.transmit("SOS", blinker)
