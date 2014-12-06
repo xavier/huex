@@ -52,10 +52,10 @@ defmodule Huex.Color do
   #
 
   @spec rgb(float, float, float) :: Huex.xy_color
-  def rgb(r, g, b), do: rgb_to_xy({r, g, b})
+  def rgb(r, g, b), do: rgb_to_hsv({r, g, b})
 
   @spec rgb(rgb_color) :: Huex.xy_color
-  def rgb(rgb),     do: rgb_to_xy(rgb)
+  def rgb(rgb),     do: rgb_to_hsv(rgb)
 
   def rgb_to_xy(r, g, b),  do: rgb_to_xy({r, g, b})
   def rgb_to_xy(rgb_tuple) do
