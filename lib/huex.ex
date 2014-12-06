@@ -173,9 +173,12 @@ defmodule Huex do
   # Keep track of errors in chainable operations
   #
 
-  # TODO check whether we can possibly receive more than one object in the array
-  defp update_bridge([%{"success" => _}], bridge),          do: %Bridge{bridge | status: :ok, error: nil}
-  defp update_bridge([%{"error" => _} = response], bridge), do: %Bridge{bridge | status: :error, error: response}
+  defp update_bridge(response, bridge) do
+    case Enum.find(response, fn (hash) -> hash["error"] end) do
+      nil -> %Bridge{bridge | status: :ok, error: nil}
+      _   -> %Bridge{bridge | status: :error, error: response}
+    end
+  end
 
   #
   # URLs
