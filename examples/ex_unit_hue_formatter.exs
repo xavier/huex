@@ -56,7 +56,7 @@ defmodule ExUnitHueFormatter do
     {:ok, %{config | failures_counter: config.failures_counter + 1}}
   end
 
-  def handle_event(wtf, config) do
+  def handle_event(_, config) do
     {:ok, config}
   end
 
