@@ -3,7 +3,7 @@ defmodule Huex.Mixfile do
 
   def project do
     [app: :huex,
-     version: "0.4.0",
+     version: "0.4.1",
      elixir: "~> 1.1",
      deps: deps,
      description: description,
@@ -32,8 +32,8 @@ defmodule Huex.Mixfile do
     [
       {:httpoison, "~> 0.5"},
       {:json, "~> 0.3.0"},
-      {:earmark, "~> 0.1", only: :dev},
-      {:ex_doc, "~> 0.6", only: :dev}
+      {:earmark, "~> 0.1.17", only: :dev},
+      {:ex_doc, "~> 0.10", only: :dev}
     ]
   end
 
