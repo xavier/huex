@@ -102,8 +102,8 @@ defmodule Huex.Color do
     {h, s, v}
   end
 
-  defp rgb_to_normalized_hsv({r, g, b}) do
-    {min, max} = minmax(r, g, b)
+  defp rgb_to_normalized_hsv(rgb = {r, g, b}) do
+    {min, max} = rgb |> Tuple.to_list |> Enum.min_max
     if max > 0 do
       delta = max - min
       h = case max do
@@ -117,12 +117,6 @@ defmodule Huex.Color do
     else
       {0, 0, 0}
     end
-  end
-
-  defp minmax(r, g, b) do
-    min = Kernel.min(r, Kernel.min(g, b))
-    max = Kernel.max(r, Kernel.max(g, b))
-    {min, max}
   end
 
   defp h_to_degrees(h) when h < 0, do: (h * 60) + 360
