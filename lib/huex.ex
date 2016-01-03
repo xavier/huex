@@ -20,6 +20,7 @@ defmodule Huex do
   Light identifier can be either a numberic or a binary (e.g. "1")
   """
   @type light :: non_neg_integer | binary
+  @type group :: non_neg_integer | binary
 
   @typedoc """
   Tuple containing respectively the hue (0-65535), staturation (0-255) and value/brillance (0-255) components
@@ -211,6 +212,127 @@ defmodule Huex do
     bridge |> light_state_url(light) |> put_json(new_state) |> update_bridge(bridge)
   end
 
+
+  ### GROUPS ###
+
+    @doc """
+  Lists the lights connected to the given `bridge`.
+  Requires the connection to be authorized.
+  """
+  @spec groups(bridge) :: Map.t
+  def groups(bridge) do
+    bridge |> groups_url |> get_json
+  end
+
+  @doc """
+  Fetches all informations available about the given `group` connected to the `bridge`.
+  Requires the connection to be authorized.
+  """
+  @spec group_info(bridge, group) :: Map.t
+  def group_info(bridge, group) do
+    bridge |> group_url(group) |> get_json
+  end
+
+  @doc """
+  Turns the given group on.
+  Requires the connection to be authorized.
+  """
+  @spec turn_group_on(bridge, group) :: bridge
+  def turn_group_on(bridge, group) do
+    bridge |> set_group_state(group, %{on: true})
+  end
+
+  @doc """
+  Turns the given group on using the given transition time (in ms).
+  Requires the connection to be authorized.
+  """
+  @spec turn_group_on(bridge, group, non_neg_integer) :: bridge
+  def turn_group_on(bridge, group, transition_time_ms) do
+    bridge |> set_group_state(group, %{on: true, transitiontime: transition_time(transition_time_ms)})
+  end
+
+  @doc """
+  Turns the given group off.
+  Requires the connection to be authorized.
+  """
+  @spec turn_group_off(bridge, group) :: bridge
+  def turn_group_off(bridge, group) do
+    bridge |> set_group_state(group, %{on: false})
+  end
+
+  @doc """
+  Turns the given group off using the given transition time (in ms).
+  Requires the connection to be authorized.
+  """
+  @spec turn_group_off(bridge, group, non_neg_integer) :: bridge
+  def turn_group_off(bridge, group, transition_time_ms) do
+    bridge |> set_group_state(group, %{on: false, transitiontime: transition_time(transition_time_ms)})
+  end
+
+  @doc """
+  Sets the color (hue, saturation and brillance) of the given group.
+  Requires the connection to be authorized.
+  """
+  @spec set_group_color(bridge, group, hsv_color) :: bridge
+  def set_group_color(bridge, group, {h, s, v}) do
+    bridge |> set_group_state(group, %{on: true, hue: h, sat: s, bri: v})
+  end
+
+  @doc """
+  Sets the color of the given group using Philips' proprietary bi-dimensional color space.
+  Requires the connection to be authorized.
+  """
+  @spec set_group_color(bridge, group, xy_color) :: bridge
+  def set_group_color(bridge, group, {x, y}) do
+    bridge |> set_group_state(group, %{on: true, xy: [x, y]})
+  end
+
+  @doc """
+  Sets the color (hue, saturation and brillance) of the given group using the given transition time (in ms).
+  Requires the connection to be authorized.
+  """
+  @spec set_group_color(bridge, group, hsv_color, non_neg_integer) :: bridge
+  def set_group_color(bridge, group, {h, s, v}, transition_time_ms) do
+    bridge |> set_group_state(group, %{on: true, hue: h, sat: s, bri: v, transitiontime: transition_time(transition_time_ms)})
+  end
+
+  @doc """
+  Sets the color of the given group using Philips' proprietary bi-dimensional color space using the given transition time (in ms).
+  Requires the connection to be authorized.
+  """
+  @spec set_group_color(bridge, group, xy_color, non_neg_integer) :: bridge
+  def set_group_color(bridge, group, {x, y}, transition_time_ms) do
+    bridge |> set_group_state(group, %{on: true, xy: [x, y], transitiontime: transition_time(transition_time_ms)})
+  end
+
+  @doc """
+  Sets the brigthness of the given group (a value between 0 and 1).
+  Requires the connection to be authorized.
+  """
+  @spec set_group_brightness(bridge, group, float) :: bridge
+  def set_group_brightness(bridge, group, brightness) do
+    bridge |> set_group_state(group, %{on: true, bri: round(brightness * 255.0)})
+  end
+
+  @doc """
+  Sets the brigthness of the given group (a value between 0 and 1) using the given transition time (in ms).
+  Requires the connection to be authorized.
+  """
+  @spec set_group_brightness(bridge, group, float, non_neg_integer) :: bridge
+  def set_group_brightness(bridge, group, brightness, transition_time_ms) do
+    bridge |> set_group_state(group, %{on: true, bri: round(brightness * 255.0), transitiontime: transition_time(transition_time_ms)})
+  end
+
+  @doc """
+  Sets the state of the given group. For a list of accepted keys, look at the `state` object in the response of `group_info`
+  Requires the connection to be authorized.
+  """
+  @spec set_group_state(bridge, group, Map.t) :: bridge
+  def set_group_state(bridge, group, new_state) do
+    bridge |> group_state_url(group) |> put_json(new_state) |> update_bridge(bridge)
+  end
+
+
   # Private API
 
   #
@@ -227,6 +349,10 @@ defmodule Huex do
   #
   # URLs
   #
+
+  defp group_state_url(bridge, group), do: group_url(bridge, group) <> "/action"
+  defp group_url(bridge, group), do: groups_url(bridge) <> "/#{group}"
+  defp groups_url(bridge), do: user_api_url(bridge, "groups")
 
   defp light_state_url(bridge, light), do: light_url(bridge, light) <> "/state"
   defp light_url(bridge, light), do: lights_url(bridge) <> "/#{light}"
