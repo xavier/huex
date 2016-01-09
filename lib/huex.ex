@@ -212,11 +212,8 @@ defmodule Huex do
     bridge |> light_state_url(light) |> put_json(new_state) |> update_bridge(bridge)
   end
 
-
-  ### GROUPS ###
-
-    @doc """
-  Lists the lights connected to the given `bridge`.
+  @doc """
+  Lists the light groups configured for the given `bridge`.
   Requires the connection to be authorized.
   """
   @spec groups(bridge) :: Map.t
