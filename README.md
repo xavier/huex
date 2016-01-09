@@ -93,6 +93,11 @@ Color space conversion from RGB to XY currently feels a little fishy: I can't se
 
 - [ ] Reliable color conversion from RGB
 
+## Contributors
+
+* Xavier Defrang ([xavier](https://github.com/xavier))
+* Brandon Hays ([tehviking](https://github.com/tehviking))
+
 ## License
 
 Copyright 2014 Xavier Defrang
