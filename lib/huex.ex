@@ -2,21 +2,14 @@ defmodule Huex do
 
   @moduledoc """
 
-  ## Elixir client for Philips Hue connected light bulbs.
+  Elixir client for Philips Hue connected light bulbs.
 
-  Query functions return the response from the API.
-
-  Command functions return a `Bridge` struct in order to be pipeline friendly.
+  * Query functions return the response from the API.
+  * Command functions return a `Bridge` struct in order to be pipeline friendly.
 
   Read more on the [GitHub page](https://github.com/xavier/huex).
 
   """
-
-
-  @typedoc """
-  A structure holding the state of the connection to the bridge
-  """
-  @type bridge :: Bridge.t
 
   @typedoc """
   Light identifier can be either a numberic or a binary (e.g. "1")
@@ -47,15 +40,14 @@ defmodule Huex do
 
   defmodule Bridge do
     @moduledoc """
-
-    Stores the state of the connection with the bridge device
+    Structure holding the state of the connection with the bridge device
 
     * `host`     - IP address or hostname of the bridge device
     * `username` - username used to issue API calls to the bridge device
     * `status`   - `:ok` or `:error`
     * `error`    - error message
-
     """
+
     defstruct host: nil, username: nil, status: :ok, error: nil
 
     @type t :: %__MODULE__{
@@ -70,7 +62,7 @@ defmodule Huex do
   Requires the connection to be authorized.
   """
 
-  @spec connect(binary, binary) :: bridge
+  @spec connect(binary, binary) :: Bridge.t
   def connect(host, username \\ nil) do
     %Bridge{host: host, username: username}
   end
@@ -86,7 +78,7 @@ defmodule Huex do
     3. Call `authorize` again with the same parameters, it should succeed
 
   """
-  @spec authorize(bridge, binary) :: bridge
+  @spec authorize(Bridge.t, binary) :: Bridge.t
   def authorize(bridge, username) do
     payload = %{devicetype: "test user", username: username}
     bridge = bridge |> api_url |> post_json(payload) |> update_bridge(bridge)
@@ -96,7 +88,7 @@ defmodule Huex do
   @doc """
   Fetches all informations available in the `bridge`.
   """
-  @spec info(bridge) :: Map.t
+  @spec info(Bridge.t) :: Map.t
   def info(bridge) do
     bridge |> user_api_url |> get_json
   end
@@ -105,7 +97,7 @@ defmodule Huex do
   Lists the lights connected to the given `bridge`.
   Requires the connection to be authorized.
   """
-  @spec lights(bridge) :: Map.t
+  @spec lights(Bridge.t) :: Map.t
   def lights(bridge) do
     bridge |> lights_url |> get_json
   end
@@ -114,7 +106,7 @@ defmodule Huex do
   Fetches all informations available about the given `light` connected to the `bridge`.
   Requires the connection to be authorized.
   """
-  @spec light_info(bridge, light) :: Map.t
+  @spec light_info(Bridge.t, light) :: Map.t
   def light_info(bridge, light) do
     bridge |> light_url(light) |> get_json
   end
@@ -123,7 +115,7 @@ defmodule Huex do
   Turns the given light on.
   Requires the connection to be authorized.
   """
-  @spec turn_on(bridge, light) :: bridge
+  @spec turn_on(Bridge.t, light) :: Bridge.t
   def turn_on(bridge, light) do
     bridge |> set_state(light, %{on: true})
   end
@@ -132,7 +124,7 @@ defmodule Huex do
   Turns the given light on using the given transition time (in ms).
   Requires the connection to be authorized.
   """
-  @spec turn_on(bridge, light, non_neg_integer) :: bridge
+  @spec turn_on(Bridge.t, light, non_neg_integer) :: Bridge.t
   def turn_on(bridge, light, transition_time_ms) do
     bridge |> set_state(light, %{on: true, transitiontime: transition_time(transition_time_ms)})
   end
@@ -141,7 +133,7 @@ defmodule Huex do
   Turns the given light off.
   Requires the connection to be authorized.
   """
-  @spec turn_off(bridge, light) :: bridge
+  @spec turn_off(Bridge.t, light) :: Bridge.t
   def turn_off(bridge, light) do
     bridge |> set_state(light, %{on: false})
   end
@@ -150,7 +142,7 @@ defmodule Huex do
   Turns the given light off using the given transition time (in ms).
   Requires the connection to be authorized.
   """
-  @spec turn_off(bridge, light, non_neg_integer) :: bridge
+  @spec turn_off(Bridge.t, light, non_neg_integer) :: Bridge.t
   def turn_off(bridge, light, transition_time_ms) do
     bridge |> set_state(light, %{on: false, transitiontime: transition_time(transition_time_ms)})
   end
@@ -159,7 +151,7 @@ defmodule Huex do
   Sets the color (hue, saturation and brillance) of the given light.
   Requires the connection to be authorized.
   """
-  @spec set_color(bridge, light, hsv_color) :: bridge
+  @spec set_color(Bridge.t, light, hsv_color) :: Bridge.t
   def set_color(bridge, light, {h, s, v}) do
     bridge |> set_state(light, %{on: true, hue: h, sat: s, bri: v})
   end
@@ -168,7 +160,7 @@ defmodule Huex do
   Sets the color of the given light using Philips' proprietary bi-dimensional color space.
   Requires the connection to be authorized.
   """
-  @spec set_color(bridge, light, xy_color) :: bridge
+  @spec set_color(Bridge.t, light, xy_color) :: Bridge.t
   def set_color(bridge, light, {x, y}) do
     bridge |> set_state(light, %{on: true, xy: [x, y]})
   end
@@ -177,7 +169,7 @@ defmodule Huex do
   Sets the color (hue, saturation and brillance) of the given light using the given transition time (in ms).
   Requires the connection to be authorized.
   """
-  @spec set_color(bridge, light, hsv_color, non_neg_integer) :: bridge
+  @spec set_color(Bridge.t, light, hsv_color, non_neg_integer) :: Bridge.t
   def set_color(bridge, light, {h, s, v}, transition_time_ms) do
     bridge |> set_state(light, %{on: true, hue: h, sat: s, bri: v, transitiontime: transition_time(transition_time_ms)})
   end
@@ -186,7 +178,7 @@ defmodule Huex do
   Sets the color of the given light using Philips' proprietary bi-dimensional color space using the given transition time (in ms).
   Requires the connection to be authorized.
   """
-  @spec set_color(bridge, light, xy_color, non_neg_integer) :: bridge
+  @spec set_color(Bridge.t, light, xy_color, non_neg_integer) :: Bridge.t
   def set_color(bridge, light, {x, y}, transition_time_ms) do
     bridge |> set_state(light, %{on: true, xy: [x, y], transitiontime: transition_time(transition_time_ms)})
   end
@@ -195,7 +187,7 @@ defmodule Huex do
   Sets the brigthness of the given light (a value between 0 and 1).
   Requires the connection to be authorized.
   """
-  @spec set_brightness(bridge, light, float) :: bridge
+  @spec set_brightness(Bridge.t, light, float) :: Bridge.t
   def set_brightness(bridge, light, brightness) do
     bridge |> set_state(light, %{on: true, bri: round(brightness * 255.0)})
   end
@@ -204,7 +196,7 @@ defmodule Huex do
   Sets the brigthness of the given light (a value between 0 and 1) using the given transition time (in ms).
   Requires the connection to be authorized.
   """
-  @spec set_brightness(bridge, light, float, non_neg_integer) :: bridge
+  @spec set_brightness(Bridge.t, light, float, non_neg_integer) :: Bridge.t
   def set_brightness(bridge, light, brightness, transition_time_ms) do
     bridge |> set_state(light, %{on: true, bri: round(brightness * 255.0), transitiontime: transition_time(transition_time_ms)})
   end
@@ -213,7 +205,7 @@ defmodule Huex do
   Sets the state of the given light. For a list of accepted keys, look at the `state` object in the response of `light_info`
   Requires the connection to be authorized.
   """
-  @spec set_state(bridge, light, Map.t) :: bridge
+  @spec set_state(Bridge.t, light, Map.t) :: Bridge.t
   def set_state(bridge, light, new_state) do
     bridge |> light_state_url(light) |> put_json(new_state) |> update_bridge(bridge)
   end
@@ -222,7 +214,7 @@ defmodule Huex do
   Lists the light groups configured for the given `bridge`.
   Requires the connection to be authorized.
   """
-  @spec groups(bridge) :: Map.t
+  @spec groups(Bridge.t) :: Map.t
   def groups(bridge) do
     bridge |> groups_url |> get_json
   end
@@ -231,7 +223,7 @@ defmodule Huex do
   Fetches all informations available about the given `group` connected to the `bridge`.
   Requires the connection to be authorized.
   """
-  @spec group_info(bridge, group) :: Map.t
+  @spec group_info(Bridge.t, group) :: Map.t
   def group_info(bridge, group) do
     bridge |> group_url(group) |> get_json
   end
@@ -240,7 +232,7 @@ defmodule Huex do
   Turns the given group on.
   Requires the connection to be authorized.
   """
-  @spec turn_group_on(bridge, group) :: bridge
+  @spec turn_group_on(Bridge.t, group) :: Bridge.t
   def turn_group_on(bridge, group) do
     bridge |> set_group_state(group, %{on: true})
   end
@@ -249,7 +241,7 @@ defmodule Huex do
   Turns the given group on using the given transition time (in ms).
   Requires the connection to be authorized.
   """
-  @spec turn_group_on(bridge, group, non_neg_integer) :: bridge
+  @spec turn_group_on(Bridge.t, group, non_neg_integer) :: Bridge.t
   def turn_group_on(bridge, group, transition_time_ms) do
     bridge |> set_group_state(group, %{on: true, transitiontime: transition_time(transition_time_ms)})
   end
@@ -258,7 +250,7 @@ defmodule Huex do
   Turns the given group off.
   Requires the connection to be authorized.
   """
-  @spec turn_group_off(bridge, group) :: bridge
+  @spec turn_group_off(Bridge.t, group) :: Bridge.t
   def turn_group_off(bridge, group) do
     bridge |> set_group_state(group, %{on: false})
   end
@@ -267,7 +259,7 @@ defmodule Huex do
   Turns the given group off using the given transition time (in ms).
   Requires the connection to be authorized.
   """
-  @spec turn_group_off(bridge, group, non_neg_integer) :: bridge
+  @spec turn_group_off(Bridge.t, group, non_neg_integer) :: Bridge.t
   def turn_group_off(bridge, group, transition_time_ms) do
     bridge |> set_group_state(group, %{on: false, transitiontime: transition_time(transition_time_ms)})
   end
@@ -276,7 +268,7 @@ defmodule Huex do
   Sets the color (hue, saturation and brillance) of the given group.
   Requires the connection to be authorized.
   """
-  @spec set_group_color(bridge, group, hsv_color) :: bridge
+  @spec set_group_color(Bridge.t, group, hsv_color) :: Bridge.t
   def set_group_color(bridge, group, {h, s, v}) do
     bridge |> set_group_state(group, %{on: true, hue: h, sat: s, bri: v})
   end
@@ -285,7 +277,7 @@ defmodule Huex do
   Sets the color of the given group using Philips' proprietary bi-dimensional color space.
   Requires the connection to be authorized.
   """
-  @spec set_group_color(bridge, group, xy_color) :: bridge
+  @spec set_group_color(Bridge.t, group, xy_color) :: Bridge.t
   def set_group_color(bridge, group, {x, y}) do
     bridge |> set_group_state(group, %{on: true, xy: [x, y]})
   end
@@ -294,7 +286,7 @@ defmodule Huex do
   Sets the color (hue, saturation and brillance) of the given group using the given transition time (in ms).
   Requires the connection to be authorized.
   """
-  @spec set_group_color(bridge, group, hsv_color, non_neg_integer) :: bridge
+  @spec set_group_color(Bridge.t, group, hsv_color, non_neg_integer) :: Bridge.t
   def set_group_color(bridge, group, {h, s, v}, transition_time_ms) do
     bridge |> set_group_state(group, %{on: true, hue: h, sat: s, bri: v, transitiontime: transition_time(transition_time_ms)})
   end
@@ -303,7 +295,7 @@ defmodule Huex do
   Sets the color of the given group using Philips' proprietary bi-dimensional color space using the given transition time (in ms).
   Requires the connection to be authorized.
   """
-  @spec set_group_color(bridge, group, xy_color, non_neg_integer) :: bridge
+  @spec set_group_color(Bridge.t, group, xy_color, non_neg_integer) :: Bridge.t
   def set_group_color(bridge, group, {x, y}, transition_time_ms) do
     bridge |> set_group_state(group, %{on: true, xy: [x, y], transitiontime: transition_time(transition_time_ms)})
   end
@@ -312,7 +304,7 @@ defmodule Huex do
   Sets the brigthness of the given group (a value between 0 and 1).
   Requires the connection to be authorized.
   """
-  @spec set_group_brightness(bridge, group, float) :: bridge
+  @spec set_group_brightness(Bridge.t, group, float) :: Bridge.t
   def set_group_brightness(bridge, group, brightness) do
     bridge |> set_group_state(group, %{on: true, bri: round(brightness * 255.0)})
   end
@@ -321,7 +313,7 @@ defmodule Huex do
   Sets the brigthness of the given group (a value between 0 and 1) using the given transition time (in ms).
   Requires the connection to be authorized.
   """
-  @spec set_group_brightness(bridge, group, float, non_neg_integer) :: bridge
+  @spec set_group_brightness(Bridge.t, group, float, non_neg_integer) :: Bridge.t
   def set_group_brightness(bridge, group, brightness, transition_time_ms) do
     bridge |> set_group_state(group, %{on: true, bri: round(brightness * 255.0), transitiontime: transition_time(transition_time_ms)})
   end
@@ -330,7 +322,7 @@ defmodule Huex do
   Sets the state of the given group. For a list of accepted keys, look at the `state` object in the response of `group_info`
   Requires the connection to be authorized.
   """
-  @spec set_group_state(bridge, group, Map.t) :: bridge
+  @spec set_group_state(Bridge.t, group, Map.t) :: Bridge.t
   def set_group_state(bridge, group, new_state) do
     bridge |> group_state_url(group) |> put_json(new_state) |> update_bridge(bridge)
   end

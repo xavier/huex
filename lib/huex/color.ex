@@ -1,5 +1,9 @@
 defmodule Huex.Color do
 
+  @moduledoc """
+  Color space conversion utilities
+  """
+
   @typedoc """
   Tuple containing respectively the red, greend and blue components of a color, each between 0 and 1
   """
