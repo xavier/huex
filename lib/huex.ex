@@ -13,7 +13,9 @@ defmodule Huex do
   """
 
 
-  @typedoc ""
+  @typedoc """
+  A structure holding the state of the connection to the bridge
+  """
   @type bridge :: Bridge.t
 
   @typedoc """
