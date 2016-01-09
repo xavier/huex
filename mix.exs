@@ -43,7 +43,7 @@ defmodule Huex.Mixfile do
 
   defp package do
     [
-      files: ["lib", "priv", "mix.exs", "README*", "LICENSE*", "examples"],
+      files: ["lib", "mix.exs", "README*", "LICENSE*", "examples"],
       maintainers: ["Xavier Defrang"],
       licenses: ["Apache 2.0"],
       links: %{"GitHub" => "https://github.com/xavier/huex"}
