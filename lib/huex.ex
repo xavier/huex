@@ -34,7 +34,7 @@ defmodule Huex do
   @type hsv_color :: {non_neg_integer, non_neg_integer, non_neg_integer}
 
   @typedoc """
-  Tuple containing the x and y component of the color
+  Tuple containing the x (0-0.8) and y (0-0.8) component of the color
   """
   @type xy_color  :: {float, float}
 
