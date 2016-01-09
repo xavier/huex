@@ -20,6 +20,10 @@ defmodule Huex do
   Light identifier can be either a numberic or a binary (e.g. "1")
   """
   @type light :: non_neg_integer | binary
+
+  @typedoc """
+  Group identifier can be either a numberic or a binary (e.g. "1"). Special group 0 always contains all the lights.
+  """
   @type group :: non_neg_integer | binary
 
   @typedoc """
