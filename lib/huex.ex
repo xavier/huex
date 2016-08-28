@@ -44,14 +44,16 @@ defmodule Huex do
 
     * `host`     - IP address or hostname of the bridge device
     * `username` - username used to issue API calls to the bridge device
+    * `devicetype` - application_name
     * `status`   - `:ok` or `:error`
     * `error`    - error message
     """
 
-    defstruct host: nil, username: nil, status: :ok, error: nil
+    defstruct host: nil, devicetype: nil, username: nil, status: :ok, error: nil
 
     @type t :: %__MODULE__{
                  host: binary,
+                 devicetype: binary,
                  username: binary,
                  status: Huex.status,
                  error: nil | binary}
@@ -63,8 +65,8 @@ defmodule Huex do
   """
 
   @spec connect(binary, binary) :: Bridge.t
-  def connect(host, username \\ nil) do
-    %Bridge{host: host, username: username}
+  def connect(host, devicetype \\ "test-device", username \\ "test-user") do
+    %Bridge{host: host, devicetype: devicetype, username: username}
   end
 
   @doc """
@@ -80,7 +82,7 @@ defmodule Huex do
   """
   @spec authorize(Bridge.t, binary) :: Bridge.t
   def authorize(bridge, _) do
-    payload = %{devicetype: "test user"}
+    payload = %{devicetype: "#{bridge.devicetype}##{bridge.username}"}
     bridge = bridge |> api_url |> post_json(payload) |> update_bridge(bridge)
   end
 
