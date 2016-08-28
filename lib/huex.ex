@@ -1,4 +1,5 @@
 defmodule Huex do
+  require IEx
 
   @moduledoc """
 
@@ -79,10 +80,9 @@ defmodule Huex do
 
   """
   @spec authorize(Bridge.t, binary) :: Bridge.t
-  def authorize(bridge, username) do
-    payload = %{devicetype: "test user", username: username}
+  def authorize(bridge, _) do
+    payload = %{devicetype: "test user"}
     bridge = bridge |> api_url |> post_json(payload) |> update_bridge(bridge)
-    %Bridge{bridge | username: username}
   end
 
   @doc """
@@ -336,9 +336,13 @@ defmodule Huex do
 
   defp update_bridge(response, bridge) do
     case Enum.find(response, fn (hash) -> hash["error"] end) do
-      nil -> %Bridge{bridge | status: :ok, error: nil}
+      nil -> %Bridge{bridge | username: extract_token(response), status: :ok, error: nil}
       _   -> %Bridge{bridge | status: :error, error: response}
     end
+  end
+
+  defp extract_token(response) do
+    List.first(response) |> Dict.fetch!("success") |> Dict.fetch!("username")
   end
 
   #
@@ -354,8 +358,8 @@ defmodule Huex do
   defp lights_url(bridge), do: user_api_url(bridge, "lights")
 
   defp user_api_url(bridge, relative_path), do: user_api_url(bridge) <> "/#{relative_path}"
-  defp user_api_url(%Bridge{username: username} = bridge), do: api_url(bridge, username)
-
+  defp user_api_url(bridge), do: api_url(bridge, Map.fetch!(bridge, :username))
+  
   defp api_url(bridge, relative_path), do: api_url(bridge) <> "/#{relative_path}"
   defp api_url(%Bridge{host: host}),   do: "http://#{host}/api"
 
