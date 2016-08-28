@@ -1,5 +1,4 @@
 defmodule Huex do
-  require IEx
 
   @moduledoc """
 
@@ -359,7 +358,7 @@ defmodule Huex do
 
   defp user_api_url(bridge, relative_path), do: user_api_url(bridge) <> "/#{relative_path}"
   defp user_api_url(bridge), do: api_url(bridge, Map.fetch!(bridge, :username))
-  
+
   defp api_url(bridge, relative_path), do: api_url(bridge) <> "/#{relative_path}"
   defp api_url(%Bridge{host: host}),   do: "http://#{host}/api"
 
