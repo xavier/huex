@@ -18,26 +18,33 @@ After you are done, run `mix deps.get` in your shell to fetch and compile Huex.
 
 ### First Connection
 
-When connecting to the bridge API for the very first time, we need to request an
-authorization for a new application and user (here named "app_name and username") during the connect phase.
+In order to issue queries and commands to the bridge, we need to request an authorization for a so-called `devicetype` (see [Hue Configuration API](http://www.developers.meethue.com/documentation/configuration-api)) which is a string formatted as such: `my-app#my-device`.
+
+**Before requesting the authorization**: you must **press the link button** on your bridge device to start a 30 second window during which you may request an authorization as follow:
 
 ```elixir
-bridge = Huex.connect("192.168.1.100", "app_name", "username") |> Huex.authorize)
+bridge = Huex.connect("192.168.1.100") |> Huex.authorize("my-app#my-device")
 
-# As requested, press the link button on the bridge to authorize this new user
-# then request authorization again
+# A random username is now set
+IO.puts bridge.username
+# YApVhLTwWUTlGJDo...
 
-bridge = Huex.authorize(bridge)
+# The bridge connection is now ready for use
+IO.inspect Huex.info(bridge)
+# %{"config" => ...}
 
 ```
 
 ### Subsequent Connections
 
-Once a user has been authorized with the bridge, there's no need to perform
-the authorization process, you can connect right away.
+Once a `devicetype` has been authorized with the bridge, there's no need to perform the authorization process again. In other words, you must **store the generated username** received set by `authorize/2`. With the username at hand, you can connect right away:
 
 ```elixir
-bridge = Huex.connect("192.168.1.100", "app_name", "username")
+bridge = Huex.connect("192.168.1.100", "YApVhLTwWUTlGJDo...")
+
+IO.inspect Huex.info(bridge)
+# %{"config" => ...}
+
 ```
 
 ### Queries
