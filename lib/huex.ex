@@ -29,12 +29,17 @@ defmodule Huex do
   @typedoc """
   Tuple containing the x (0-0.8) and y (0-0.8) component of the color
   """
-  @type xy_color  :: {float, float}
+  @type xy_color :: {float, float}
 
   @typedoc """
   Possible status of a `Bridge`
   """
-  @type status  :: nil | :ok | :error
+  @type status :: nil | :ok | :error
+
+  @typedoc """
+  Application and device identifier used for authorization. Either a "app-name#device-name" string or {"app-name", "device-name"} tuple
+  """
+  @type devicetype :: binary | {binary, binary}
 
   # Public API
 
@@ -73,15 +78,15 @@ defmodule Huex do
 
   Bridge authorization is a one-time process per `devicetype` and goes as follow:
 
-    1. **Press the link button on your bridge device**
+    1. **Press the link button** on your bridge device
     2. Call `authorize` to obtain a random username for the given `devicetype`
     3. The bridge `username` will be set and the returned bridge can now be used to issue queries and commands
     4. Store the `username` to reuse it with `connect/2` next time your interact with this bridge
 
   """
-  @spec authorize(Bridge.t, binary) :: Bridge.t
+  @spec authorize(Bridge.t, devicetype) :: Bridge.t
   def authorize(bridge, devicetype) do
-    bridge |> api_url |> post_json(%{devicetype: devicetype}) |> update_bridge(bridge)
+    bridge |> api_url |> post_json(%{devicetype: format_devicetype(devicetype)}) |> update_bridge(bridge)
   end
 
   @doc """
@@ -399,6 +404,9 @@ defmodule Huex do
   #
   # Miscellaneous helpers
   #
+
+  defp format_devicetype({application_name, device_name}), do: application_name <> "#" <> device_name
+  defp format_devicetype(devicetype), do: devicetype
 
   defp transition_time(ms), do: div(ms, 100)
 

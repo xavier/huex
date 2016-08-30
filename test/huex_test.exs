@@ -21,11 +21,20 @@ defmodule HuexTest do
     assert bridge.status == :ok
   end
 
-  test "an authorized client returns a bridge generated username" do
+  test "an authorized client given as string returns a bridge generated username" do
     use_cassette "authorize_client" do
       bridge =
         Huex.connect("192.168.1.1")
-        |> Huex.authorize("foo")
+        |> Huex.authorize("foo#bar")
+      assert bridge.username == "99Y95FB1pY1JGiw25ceclUxuOpWA7D9etDP45SD0"
+    end
+  end
+
+  test "an authorized client given as tuple returns a bridge generated username" do
+    use_cassette "authorize_client" do
+      bridge =
+        Huex.connect("192.168.1.1")
+        |> Huex.authorize({"foo", "bar"})
       assert bridge.username == "99Y95FB1pY1JGiw25ceclUxuOpWA7D9etDP45SD0"
     end
   end
