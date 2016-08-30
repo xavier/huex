@@ -390,6 +390,7 @@ defmodule Huex do
   # TODO FIXME figure out why HTTPoison always treat the response as an error
   defp handle_response({:ok, response}), do: decode_response_body(response.body)
   defp handle_response({:error, %HTTPoison.Error{id: nil, reason: {:closed, body}}}), do: decode_response_body(body)
+  defp handle_response({:error, %HTTPoison.Error{reason: reason}}), do: {:error, reason}
 
   defp decode_response_body(body) do
     {:ok, object} = JSON.decode(body)
