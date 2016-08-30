@@ -19,15 +19,15 @@ After you are done, run `mix deps.get` in your shell to fetch and compile Huex.
 ### First Connection
 
 When connecting to the bridge API for the very first time, we need to request an
-authorization for a new user (here named "huexexamples")
+authorization for a new application and user (here named "app_name and username") during the connect phase.
 
 ```elixir
-bridge = Huex.connect("192.168.1.100") |> Huex.authorize("huexexamples")
+bridge = Huex.connect("192.168.1.100", "app_name", "username") |> Huex.authorize)
 
 # As requested, press the link button on the bridge to authorize this new user
 # then request authorization again
 
-bridge = Huex.authorize(bridge, "huexexamples")
+bridge = Huex.authorize(bridge)
 
 ```
 
@@ -37,7 +37,7 @@ Once a user has been authorized with the bridge, there's no need to perform
 the authorization process, you can connect right away.
 
 ```elixir
-bridge = Huex.connect("192.168.1.100", "huexexamples")
+bridge = Huex.connect("192.168.1.100", "app_name", "username")
 ```
 
 ### Queries

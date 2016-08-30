@@ -44,14 +44,16 @@ defmodule Huex do
 
     * `host`     - IP address or hostname of the bridge device
     * `username` - username used to issue API calls to the bridge device
+    * `devicetype` - application_name
     * `status`   - `:ok` or `:error`
     * `error`    - error message
     """
 
-    defstruct host: nil, username: nil, status: :ok, error: nil
+    defstruct host: nil, devicetype: nil, username: nil, status: :ok, error: nil
 
     @type t :: %__MODULE__{
                  host: binary,
+                 devicetype: binary,
                  username: binary,
                  status: Huex.status,
                  error: nil | binary}
@@ -63,8 +65,8 @@ defmodule Huex do
   """
 
   @spec connect(binary, binary) :: Bridge.t
-  def connect(host, username \\ nil) do
-    %Bridge{host: host, username: username}
+  def connect(host, devicetype \\ "test-device", username \\ "test-user") do
+    %Bridge{host: host, devicetype: devicetype, username: username}
   end
 
   @doc """
@@ -79,10 +81,9 @@ defmodule Huex do
 
   """
   @spec authorize(Bridge.t, binary) :: Bridge.t
-  def authorize(bridge, username) do
-    payload = %{devicetype: "test user", username: username}
-    bridge = bridge |> api_url |> post_json(payload) |> update_bridge(bridge)
-    %Bridge{bridge | username: username}
+  def authorize(bridge, _) do
+    payload = %{devicetype: "#{bridge.devicetype}##{bridge.username}"}
+    bridge |> api_url |> post_json(payload) |> update_bridge(bridge)
   end
 
   @doc """
@@ -336,9 +337,13 @@ defmodule Huex do
 
   defp update_bridge(response, bridge) do
     case Enum.find(response, fn (hash) -> hash["error"] end) do
-      nil -> %Bridge{bridge | status: :ok, error: nil}
+      nil -> %Bridge{bridge | username: extract_token(response), status: :ok, error: nil}
       _   -> %Bridge{bridge | status: :error, error: response}
     end
+  end
+
+  defp extract_token(response) do
+    List.first(response) |> Dict.fetch!("success") |> Dict.fetch!("username")
   end
 
   #
@@ -354,7 +359,7 @@ defmodule Huex do
   defp lights_url(bridge), do: user_api_url(bridge, "lights")
 
   defp user_api_url(bridge, relative_path), do: user_api_url(bridge) <> "/#{relative_path}"
-  defp user_api_url(%Bridge{username: username} = bridge), do: api_url(bridge, username)
+  defp user_api_url(bridge), do: api_url(bridge, Map.fetch!(bridge, :username))
 
   defp api_url(bridge, relative_path), do: api_url(bridge) <> "/#{relative_path}"
   defp api_url(%Bridge{host: host}),   do: "http://#{host}/api"
