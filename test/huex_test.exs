@@ -3,6 +3,7 @@ defmodule HuexTest do
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
   setup_all do
+    ExVCR.Config.cassette_library_dir("test/fixtures/vcr_cassettes")
     HTTPoison.start
   end
 
