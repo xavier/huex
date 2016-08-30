@@ -83,7 +83,7 @@ defmodule Huex do
   @spec authorize(Bridge.t, binary) :: Bridge.t
   def authorize(bridge, _) do
     payload = %{devicetype: "#{bridge.devicetype}##{bridge.username}"}
-    bridge = bridge |> api_url |> post_json(payload) |> update_bridge(bridge)
+    bridge |> api_url |> post_json(payload) |> update_bridge(bridge)
   end
 
   @doc """

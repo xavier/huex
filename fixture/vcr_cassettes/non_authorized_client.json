@@ -1,0 +1,29 @@
+[
+  {
+    "request": {
+      "body": "{\"devicetype\":\"device-in-test#testingusername\"}",
+      "headers": [],
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "http://192.168.1.1/api"
+    },
+    "response": {
+      "body": "[{\"error\":{\"type\":101,\"address\":\"\",\"description\":\"link button not pressed\"}}]",
+      "headers": {
+        "Cache-Control": "no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+        "Pragma": "no-cache",
+        "Expires": "Mon, 1 Aug 2011 09:00:00 GMT",
+        "Connection": "close",
+        "Access-Control-Max-Age": "3600",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE, HEAD",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Content-type": "application/json"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
