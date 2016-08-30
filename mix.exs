@@ -32,9 +32,9 @@ defmodule Huex.Mixfile do
     [
       {:httpoison, "~> 0.9.0"},
       {:json, "~> 0.3.0"},
-      {:earmark, "~> 0.1", only: :dev},
       {:exvcr, "~> 0.7", only: :test},
-      {:ex_doc, "~> 0.11", only: :dev}
+      {:earmark, "~> 0.2.1", only: :dev},
+      {:ex_doc, "~> 0.12", only: :dev}
     ]
   end
 
