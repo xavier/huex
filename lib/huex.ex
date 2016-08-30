@@ -337,8 +337,8 @@ defmodule Huex do
     case response do
       [%{"success" => %{"username" => username}}] ->
         %Bridge{bridge | username: username, status: :ok, error: nil}
-      [%{"error" => _}|_] ->
-        %Bridge{bridge | status: :error, error: response}
+      [%{"error" => error}|_] ->
+        %Bridge{bridge | status: :error, error: error}
       _ ->
         %Bridge{bridge | status: :ok, error: nil}
 

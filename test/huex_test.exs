@@ -36,6 +36,7 @@ defmodule HuexTest do
         Huex.connect("192.168.1.1")
         |> Huex.authorize("foo")
       assert bridge.status == :error
+      assert bridge.error["description"] == "link button not pressed"
     end
   end
 
