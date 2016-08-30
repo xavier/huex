@@ -41,7 +41,8 @@ defmodule HuexTest do
       bridge = %Huex.Bridge{devicetype: "test-device", error: nil, host: "192.168.1.239",
  status: :ok, username: "clHm-mvm5-OB32rAt83pahBmtdZusBG3AmVr3TCy"}
       response = Huex.info(bridge)
-      refute response.status == :error
+      assert Map.has_key?(response, "config")
+      assert Map.has_key?(response, "lights")
     end
   end
 end
