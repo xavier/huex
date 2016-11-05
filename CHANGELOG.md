@@ -1,5 +1,13 @@
 # Changelog for Huex
 
+## 0.6.2
+
+* Add json to runtime dependencies 
+
+## 0.6.1
+
+* Fix README
+
 ## 0.6.0
 
 * Updated authorization method (Brian Davis)
