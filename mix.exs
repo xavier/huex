@@ -3,7 +3,7 @@ defmodule Huex.Mixfile do
 
   def project do
     [app: :huex,
-     version: "0.6.2",
+     version: "0.6.3",
      elixir: "~> 1.1",
      deps: deps(),
      description: description(),
