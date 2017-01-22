@@ -33,8 +33,8 @@ defmodule Huex.Mixfile do
       {:httpoison, "~> 0.11.0"},
       {:poison, "~> 3.0"},
       {:exvcr, "~> 0.8.0", only: :test},
-      {:earmark, "~> 0.2.1", only: :dev},
-      {:ex_doc, "~> 0.12", only: :dev}
+      {:earmark, "~> 1.0", only: :dev},
+      {:ex_doc, "~> 0.14", only: :dev}
     ]
   end
 
