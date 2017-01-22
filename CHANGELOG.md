@@ -1,5 +1,11 @@
 # Changelog for Huex
 
+## 0.6.3
+
+* Elixir 1.4 compatibility
+* Switch from `json` to `poison`
+* Dependencies upgrade
+
 ## 0.6.2
 
 * Add json to runtime dependencies 
