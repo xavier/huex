@@ -30,7 +30,7 @@ defmodule Huex.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [
-      {:httpoison, "~> 0.9.0"},
+      {:httpoison, "~> 0.11.0"},
       {:json, "~> 0.3.0"},
       {:exvcr, "~> 0.7", only: :test},
       {:earmark, "~> 0.2.1", only: :dev},
