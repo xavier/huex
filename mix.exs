@@ -16,7 +16,7 @@ defmodule Huex.Mixfile do
   #
   # Type `mix help compile.app` for more information
   def application do
-    [applications: [:logger, :httpoison, :json]]
+    [applications: [:logger, :httpoison]]
   end
 
   # Dependencies can be Hex packages:
@@ -31,7 +31,7 @@ defmodule Huex.Mixfile do
   defp deps do
     [
       {:httpoison, "~> 0.11.0"},
-      {:json, "~> 0.3.0"},
+      {:poison, "~> 3.0"},
       {:exvcr, "~> 0.7", only: :test},
       {:earmark, "~> 0.2.1", only: :dev},
       {:ex_doc, "~> 0.12", only: :dev}
