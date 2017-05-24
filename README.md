@@ -12,6 +12,16 @@ def deps do
 end
 ```
 
+Also add HTTPoison as part of your applications, in your `mix.exs` file.
+
+```elixir
+def application do
+  [mod: {YourApp, []},
+   applications: [:httpoison]]
+end
+```
+
+
 After you are done, run `mix deps.get` in your shell to fetch and compile Huex.
 
 ## Usage
