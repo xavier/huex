@@ -4,7 +4,7 @@ defmodule HuexTest do
 
   setup_all do
     ExVCR.Config.cassette_library_dir("test/fixtures/vcr_cassettes")
-    HTTPoison.start
+    HTTPoison.start()
   end
 
   test "setting up a connection returns Bridge" do
@@ -26,6 +26,7 @@ defmodule HuexTest do
       bridge =
         Huex.connect("192.168.1.1")
         |> Huex.authorize("foo#bar")
+
       assert bridge.username == "99Y95FB1pY1JGiw25ceclUxuOpWA7D9etDP45SD0"
     end
   end
@@ -35,6 +36,7 @@ defmodule HuexTest do
       bridge =
         Huex.connect("192.168.1.1")
         |> Huex.authorize({"foo", "bar"})
+
       assert bridge.username == "99Y95FB1pY1JGiw25ceclUxuOpWA7D9etDP45SD0"
     end
   end
@@ -44,6 +46,7 @@ defmodule HuexTest do
       bridge =
         Huex.connect("192.168.1.1")
         |> Huex.authorize("foo")
+
       assert bridge.status == :error
       assert bridge.error["description"] == "link button not pressed"
     end
@@ -53,7 +56,7 @@ defmodule HuexTest do
     use_cassette "info_bridge" do
       info =
         Huex.connect("192.168.1.239", "clHm-mvm5-OB32rAt83pahBmtdZusBG3AmVr3TCy")
-        |> Huex.info
+        |> Huex.info()
 
       assert Map.has_key?(info, "config")
       assert Map.has_key?(info, "lights")

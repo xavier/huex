@@ -1,6 +1,4 @@
-
 defmodule Morse do
-
   @moduledoc """
 
   Transmit a morse message by blinking a Hue light
@@ -43,7 +41,7 @@ defmodule Morse do
     "6" => "-....",
     "7" => "--...",
     "8" => "---..",
-    "9" => "----.",
+    "9" => "----."
   }
 
   @default_unit_duration 750
@@ -53,21 +51,22 @@ defmodule Morse do
     message |> sanitize |> translate |> blinks(blinker, unit_duration)
   end
 
-  defp sanitize(message), do: message |> String.upcase |> String.strip
+  defp sanitize(message), do: message |> String.upcase() |> String.strip()
 
   defp translate(sanitized_message) do
-    sanitized_message |> String.codepoints |> Enum.map(fn (letter) -> @signs[letter] end)
+    sanitized_message |> String.codepoints() |> Enum.map(fn letter -> @signs[letter] end)
   end
 
   defp blinks(signs, blinker, unit_duration) do
-    Enum.each(signs, fn (sign) ->
+    Enum.each(signs, fn sign ->
       blink_letter(sign, blinker, unit_duration)
     end)
   end
 
   # Blinks a whole letter
   defp blink_letter("", _blinker, unit_duration), do: wait(@between_letters, unit_duration)
-  defp blink_letter(<< part :: binary-size(1), parts :: binary >>, blinker, unit_duration) do
+
+  defp blink_letter(<<part::binary-size(1), parts::binary>>, blinker, unit_duration) do
     blink_part(part, blinker, unit_duration)
     blink_letter(parts, blinker, unit_duration)
   end
@@ -82,15 +81,14 @@ defmodule Morse do
 
   @transition_time 0
 
-  defp on({bridge, light}),  do: bridge |> Huex.turn_on(light, @transition_time)
+  defp on({bridge, light}), do: bridge |> Huex.turn_on(light, @transition_time)
   defp off({bridge, light}), do: bridge |> Huex.turn_off(light, @transition_time)
 
-  defp wait(unit_duration),      do: :timer.sleep(unit_duration)
+  defp wait(unit_duration), do: :timer.sleep(unit_duration)
   defp wait(".", unit_duration), do: wait(unit_duration)
   defp wait("-", unit_duration), do: wait(unit_duration * 3)
   defp wait("/", unit_duration), do: wait(unit_duration * 3)
   defp wait(" ", unit_duration), do: wait(unit_duration * 7)
-
 end
 
 #

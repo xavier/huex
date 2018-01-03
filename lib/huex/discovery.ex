@@ -9,11 +9,11 @@ defmodule Huex.Discovery do
   Attempts to discover any Hue bridges operating on your network. May require multiple attempts to find your bridge.
   """
 
-  @spec discover() :: [String.t]
+  @spec discover() :: [String.t()]
   def discover do
-    Nerves.SSDPClient.discover
+    Nerves.SSDPClient.discover()
     |> Enum.filter(fn {_key, map} -> Map.has_key?(map, :"hue-bridgeid") end)
-    |> Enum.map(fn({_key, %{host: ip_address}}) -> ip_address end)
-    |> Enum.uniq
+    |> Enum.map(fn {_key, %{host: ip_address}} -> ip_address end)
+    |> Enum.uniq()
   end
 end

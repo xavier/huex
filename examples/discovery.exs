@@ -1,6 +1,5 @@
+IO.puts("Discovering Hue bridges using SSDP...")
 
-IO.puts "Discovering Hue bridges using SSDP..."
-
-Huex.Discovery.discover
+Huex.Discovery.discover()
 |> Enum.join("\n")
-|> IO.puts
+|> IO.puts()

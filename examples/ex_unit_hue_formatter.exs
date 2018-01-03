@@ -1,4 +1,3 @@
-
 defmodule ExUnitHueFormatter do
   use GenEvent
 
@@ -13,9 +12,9 @@ defmodule ExUnitHueFormatter do
 
   """
 
-  @color_pass    Huex.Color.rgb(0, 1, 0)
+  @color_pass Huex.Color.rgb(0, 1, 0)
   @color_invalid Huex.Color.rgb(1, 0.75, 0)
-  @color_fail    Huex.Color.rgb(0.75, 0, 0)
+  @color_fail Huex.Color.rgb(0.75, 0, 0)
 
   # failures_counter, invalids_counter
   defp bulb_color(0, 0), do: @color_pass
@@ -31,6 +30,7 @@ defmodule ExUnitHueFormatter do
       failures_counter: 0,
       invalids_counter: 0
     }
+
     {:ok, config}
   end
 
@@ -39,7 +39,12 @@ defmodule ExUnitHueFormatter do
     {:ok, config}
   end
 
-  def handle_event({:suite_finished, _, _}, %{bridge: bridge, light: light, failures_counter: failures_counter, invalids_counter: invalids_counter}) do
+  def handle_event({:suite_finished, _, _}, %{
+        bridge: bridge,
+        light: light,
+        failures_counter: failures_counter,
+        invalids_counter: invalids_counter
+      }) do
     bridge |> Huex.set_color(light, bulb_color(failures_counter, invalids_counter))
     :remove_handler
   end
@@ -59,7 +64,6 @@ defmodule ExUnitHueFormatter do
   def handle_event(_, config) do
     {:ok, config}
   end
-
 end
 
 #
@@ -69,7 +73,11 @@ end
 bridge_host = System.get_env("HUEX_HOST") || "192.168.1.100"
 bridge_user = System.get_env("HUEX_USER") || "huexexamples"
 
-ExUnit.start formatters: [ExUnitHueFormatter], bridge: Huex.connect(bridge_host, bridge_user), light: 1
+ExUnit.start(
+  formatters: [ExUnitHueFormatter],
+  bridge: Huex.connect(bridge_host, bridge_user),
+  light: 1
+)
 
 defmodule HueTest do
   use ExUnit.Case
@@ -81,5 +89,4 @@ defmodule HueTest do
   test "will make the light go red" do
     assert false
   end
-
 end

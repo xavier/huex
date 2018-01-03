@@ -1,5 +1,4 @@
 defmodule Huex.Color do
-
   @moduledoc """
   Color space conversion utilities
   """
@@ -55,13 +54,14 @@ defmodule Huex.Color do
   #     float y = Y / (X + Y + Z);
   #
 
-  @spec rgb(float, float, float) :: Huex.xy_color
+  @spec rgb(float, float, float) :: Huex.xy_color()
   def rgb(r, g, b), do: rgb_to_hsv({r, g, b})
 
-  @spec rgb(rgb_color) :: Huex.xy_color
-  def rgb(rgb),     do: rgb_to_hsv(rgb)
+  @spec rgb(rgb_color) :: Huex.xy_color()
+  def rgb(rgb), do: rgb_to_hsv(rgb)
 
-  def rgb_to_xy(r, g, b),  do: rgb_to_xy({r, g, b})
+  def rgb_to_xy(r, g, b), do: rgb_to_xy({r, g, b})
+
   def rgb_to_xy(rgb_tuple) do
     rgb_tuple |> correct_gamma |> rgb_to_xyz |> xyz_to_xy
   end
@@ -94,7 +94,8 @@ defmodule Huex.Color do
   #
   #
 
-  def rgb_to_hsv(r, g, b),  do: rgb_to_hsv({r, g, b})
+  def rgb_to_hsv(r, g, b), do: rgb_to_hsv({r, g, b})
+
   def rgb_to_hsv(rgb_tuple) do
     rgb_tuple |> rgb_to_normalized_hsv |> adjust_hsv
   end
@@ -107,14 +108,18 @@ defmodule Huex.Color do
   end
 
   defp rgb_to_normalized_hsv(rgb = {r, g, b}) do
-    {min, max} = rgb |> Tuple.to_list |> Enum.min_max
+    {min, max} = rgb |> Tuple.to_list() |> Enum.min_max()
+
     if max > 0 do
       delta = max - min
-      h = case max do
-            ^r ->     (g - b) / delta
-            ^g -> 2 + (b - r) / delta
-            ^b -> 4 + (r - g) / delta
-          end
+
+      h =
+        case max do
+          ^r -> (g - b) / delta
+          ^g -> 2 + (b - r) / delta
+          ^b -> 4 + (r - g) / delta
+        end
+
       s = delta / max
       v = max
       {h_to_degrees(h), s, v}
@@ -123,7 +128,6 @@ defmodule Huex.Color do
     end
   end
 
-  defp h_to_degrees(h) when h < 0, do: (h * 60) + 360
-  defp h_to_degrees(h),            do:  h * 60
-
+  defp h_to_degrees(h) when h < 0, do: h * 60 + 360
+  defp h_to_degrees(h), do: h * 60
 end
