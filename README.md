@@ -8,7 +8,7 @@ Add Huex as a dependency in your `mix.exs` file.
 
 ```elixir
 def deps do
-  [ { :huex, "~> 0.6" } ]
+  [{:huex, "~> 0.6"}]
 end
 ```
 
@@ -55,6 +55,24 @@ bridge = Huex.connect("192.168.1.100", "YApVhLTwWUTlGJDo...")
 IO.inspect Huex.info(bridge)
 # %{"config" => ...}
 
+```
+
+### Bridge IP address discovery
+
+You may use `Huex.Discovery.discover/0` to retrieve a list of bridges on your network using [SSDP](https://en.wikipedia.org/wiki/Simple_Service_Discovery_Protocol):
+
+```elixir
+Huex.Discovery.discover
+# ["192.168.1.43"]
+```
+
+This optional feature depends on [`nerves_ssdp_client`](https://hex.pm/packages/nerves_ssdp_client) which must be added explicitly to your own application dependencies in `mix.exs`:
+
+```elixir
+def deps do
+  [{:huex, "~> 0.6"},
+   {:nerves_ssdp_client, "~> 0.1"}]
+end
 ```
 
 ### Queries
