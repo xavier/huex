@@ -8,14 +8,12 @@ defmodule Huex.Discovery do
   @doc """
   Attempts to discover any Hue bridges operating on your network. May require multiple attempts to find your bridge.
   """
+
+  @spec discover() :: [String.t]
   def discover do
-    Nerves.SSDPClient.discover |> Enum.filter(
-      fn
-        {key, %{"hue-bridgeid": _x} = map} -> true
-        _ -> false
-      end
-    )
-    |> Enum.map(fn({key, %{host: ip_address}}) -> ip_address end)
+    Nerves.SSDPClient.discover
+    |> Enum.filter(fn {_key, map} -> Map.has_key?(map, :"hue-bridgeid") end)
+    |> Enum.map(fn({_key, %{host: ip_address}}) -> ip_address end)
     |> Enum.uniq
   end
 end
