@@ -8,7 +8,7 @@ Add Huex as a dependency in your `mix.exs` file.
 
 ```elixir
 def deps do
-  [{:huex, "~> 0.6"}]
+  [{:huex, "~> 0.7"}]
 end
 ```
 
@@ -70,7 +70,7 @@ This optional feature depends on [`nerves_ssdp_client`](https://hex.pm/packages/
 
 ```elixir
 def deps do
-  [{:huex, "~> 0.6"},
+  [{:huex, "~> 0.7"},
    {:nerves_ssdp_client, "~> 0.1"}]
 end
 ```
