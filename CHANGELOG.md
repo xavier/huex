@@ -1,5 +1,10 @@
 # Changelog for Huex
 
+## 0.7.0
+
+* Added bridge discovery (Derek Kraan)
+* Code reformatting
+
 ## 0.6.3
 
 * Elixir 1.4 compatibility
