@@ -118,6 +118,7 @@ In order of appearance:
 * Brandon Hays ([tehviking](https://github.com/tehviking))
 * Brian Davis ([mrbriandavis](https://github.com/mrbriandavis))
 * Pete Kazmier ([pkazmier](https://github.com/pkazmier))
+* Derek Kraan ([derekkraan](https://github.com/derekkraan))
 
 ## License
 
