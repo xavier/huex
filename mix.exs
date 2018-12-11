@@ -37,7 +37,7 @@ defmodule Huex.Mixfile do
       {:nerves_ssdp_client, "~> 0.1", optional: true},
       {:exvcr, "~> 0.8.0", only: :test},
       {:earmark, "~> 1.0", only: :dev},
-      {:ex_doc, "~> 0.14", only: :dev}
+      {:ex_doc, "~> 0.19", only: :dev}
     ]
   end
 
