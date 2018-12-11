@@ -17,6 +17,11 @@ defmodule Huex do
   @type light :: non_neg_integer | binary
 
   @typedoc """
+  Scene identifier for a bridge
+  """
+  @type scene :: String.t
+
+  @typedoc """
   Group identifier can be either a numberic or a binary (e.g. "1"). Special group 0 always contains all the lights.
   """
   @type group :: non_neg_integer | binary
@@ -104,6 +109,24 @@ defmodule Huex do
   @spec lights(Bridge.t) :: Map.t
   def lights(bridge) do
     bridge |> lights_url |> get_json
+  end
+
+  @doc """
+  Lists the scenes setup in the given `bridge`.
+  Requires the connection to be authorized
+  """
+  @spec scenes(Bridge.t) :: Map.t
+  def scenes(bridge) do
+    bridge |> scenes_url |> get_json
+  end
+
+  @doc """
+  Fetches all informations available about the given `scene` connected to the `bridge`.
+  Requires the connection to be authorized
+  """
+  @spec scene_info(Bridge.t, scene) :: Map.t
+  def scene_info(bridge, scene) do
+    bridge |> scene_url(scene) |> get_json
   end
 
   @doc """
@@ -357,6 +380,9 @@ defmodule Huex do
   defp group_state_url(bridge, group), do: group_url(bridge, group) <> "/action"
   defp group_url(bridge, group), do: groups_url(bridge) <> "/#{group}"
   defp groups_url(bridge), do: user_api_url(bridge, "groups")
+
+  defp scenes_url(bridge), do: user_api_url(bridge, "scenes")
+  defp scene_url(bridge, scene), do: scenes_url(bridge) <> "/#{scene}"
 
   defp light_state_url(bridge, light), do: light_url(bridge, light) <> "/state"
   defp light_url(bridge, light), do: lights_url(bridge) <> "/#{light}"
