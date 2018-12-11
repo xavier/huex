@@ -1,5 +1,9 @@
 # Changelog for Huex
 
+## 0.8.0
+
+* Added scene support (Ariji Dasgupta)
+
 ## 0.7.0
 
 * Added bridge discovery (Derek Kraan)

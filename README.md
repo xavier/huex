@@ -8,7 +8,7 @@ Add Huex as a dependency in your `mix.exs` file.
 
 ```elixir
 def deps do
-  [{:huex, "~> 0.7"}]
+  [{:huex, "~> 0.8"}]
 end
 ```
 
@@ -137,6 +137,7 @@ In order of appearance:
 * Brian Davis ([mrbriandavis](https://github.com/mrbriandavis))
 * Pete Kazmier ([pkazmier](https://github.com/pkazmier))
 * Derek Kraan ([derekkraan](https://github.com/derekkraan))
+* Arijit Dasgupta ([arijitdasgupta](https://github.com/arijitdasgupta))
 
 ## License
 

@@ -2,14 +2,16 @@ defmodule Huex.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :huex,
-     version: "0.7.0",
-     elixir: "~> 1.1",
-     deps: deps(),
-     description: description(),
-     package: package(),
-     source_url: "https://github.com/xavier/huex",
-     homepage_url: "https://github.com/xavier/huex"]
+    [
+      app: :huex,
+      version: "0.8.0",
+      elixir: "~> 1.1",
+      deps: deps(),
+      description: description(),
+      package: package(),
+      source_url: "https://github.com/xavier/huex",
+      homepage_url: "https://github.com/xavier/huex"
+    ]
   end
 
   # Configuration for the OTP application
