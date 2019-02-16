@@ -28,6 +28,7 @@ defmodule HuexTest do
         |> Huex.authorize("foo#bar")
 
       assert bridge.username == "99Y95FB1pY1JGiw25ceclUxuOpWA7D9etDP45SD0"
+      assert bridge.clientkey == "42455EE015F451450D267A9FEE61826D"
     end
   end
 

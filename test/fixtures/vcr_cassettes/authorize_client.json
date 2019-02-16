@@ -9,7 +9,7 @@
       "url": "http://192.168.1.1/api"
     },
     "response": {
-      "body": "[{\"success\":{\"username\":\"99Y95FB1pY1JGiw25ceclUxuOpWA7D9etDP45SD0\"}}]",
+      "body": "[{\"success\":{\"username\":\"99Y95FB1pY1JGiw25ceclUxuOpWA7D9etDP45SD0\", \"clientkey\":\"42455EE015F451450D267A9FEE61826D\"}}]",
       "headers": {
         "Cache-Control": "no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
         "Pragma": "no-cache",

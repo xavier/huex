@@ -39,6 +39,10 @@ bridge = Huex.connect("192.168.1.100") |> Huex.authorize("my-app#my-device")
 IO.puts bridge.username
 # YApVhLTwWUTlGJDo...
 
+# Also a random clientkey is now set
+IO.puts bridge.clientkey
+# 42455EE015...
+
 # The bridge connection is now ready for use
 IO.inspect Huex.info(bridge)
 # %{"config" => ...}
