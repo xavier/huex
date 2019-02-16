@@ -1,6 +1,0 @@
-Huex.connect("192.168.178.30", '8A1KE3Ctxw3tTMFjhrn0mp2FtuAgiPpWbdAXfOMp', "42455EE015F451450D267A9FEE61826D") |> Huex.set_group_to_streaming(4, true) |> Huex.open_streaming() |> Huex.stream_color([{6, {2000, 200, 0}},{7, {1000, 1000, 1000}}])
-
-
-# bridge = Huex.connect("192.168.178.30", '8A1KE3Ctxw3tTMFjhrn0mp2FtuAgiPpWbdAXfOMp', "42455EE015F451450D267A9FEE61826D")
-# Task.start(fn -> Huex.set_group_to_streaming(bridge, 4) end)
-bridge = Huex.connect("192.168.178.30", '8A1KE3Ctxw3tTMFjhrn0mp2FtuAgiPpWbdAXfOMp', "42455EE015F451450D267A9FEE61826D") |> Huex.set_group_to_streaming(4, true) |> Huex.open_streaming() |> Huex.stream_color([{6, {2000, 200, 0}},{7, {1000, 1000, 1000}}]) |> Huex.stream_color([{6, {20000, 2000, 0}},{7, {10000, 10000, 1000}}]) |> Huex.close_streaming()
