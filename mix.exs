@@ -4,7 +4,7 @@ defmodule Huex.Mixfile do
   def project do
     [
       app: :huex,
-      version: "0.9.0",
+      version: "0.10.0-alpha1",
       elixir: "~> 1.1",
       deps: deps(),
       description: description(),

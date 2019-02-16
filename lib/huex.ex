@@ -46,6 +46,16 @@ defmodule Huex do
   """
   @type devicetype :: binary | {binary, binary}
 
+  @typedoc """
+  Boolean; Indicating the state of streaming on the Hue Bridge
+  """
+  @type streaming_active :: boolean
+
+  # Streaming headers and specs as specified in https://developers.meethue.com/develop/hue-entertainment/philips-hue-entertainment-api/
+  @streaming_header <<"HueStream">> <> <<0x01, 0x00>>
+  @streaming_device_type <<0x00>>
+  @streaming_colorspace <<0x00>>
+
   # Public API
 
   defmodule Bridge do
@@ -59,13 +69,14 @@ defmodule Huex do
     * `error`     - error message
     """
 
-    defstruct host: nil, username: nil, clientkey: nil, status: :ok, error: nil
+    defstruct host: nil, username: nil, clientkey: nil, status: :ok, error: nil, socket: nil
 
     @type t :: %__MODULE__{
                  host: binary,
                  username: binary,
                  clientkey: binary,
                  status: Huex.status,
+                 socket: port,
                  error: nil | binary}
   end
 
@@ -73,10 +84,9 @@ defmodule Huex do
   Creates a connection with the bridge available on the given host or IP address.
   Username can be obtained using `authorize/2`.
   """
-
   @spec connect(binary, binary) :: Bridge.t
-  def connect(host, username \\ nil) do
-    %Bridge{host: host, username: username}
+  def connect(host, username \\ nil, clientkey \\ nil) do
+    %Bridge{host: host, username: username, clientkey: clientkey}
   end
 
   @doc """
@@ -98,6 +108,30 @@ defmodule Huex do
       devicetype: format_devicetype(devicetype),
       generateclientkey: :true
     }) |> update_bridge(bridge)
+  end
+
+  @doc """
+  Does DTLS handshake with the Hue bridge when streaming is activated on one of it's groups.
+  Returns socketed bridge or {:error, reason}. Will timeout to default value when streaming
+  mode is not activated.
+  """
+  @spec open_streaming(Bridge.t) :: Bridge.t | {:error, atom}
+  def open_streaming(bridge) do
+    case open_streaming_dtls(bridge.host, bridge.username, bridge.clientkey) do
+      {:ok, socket} -> update_bridge_socket(socket, bridge)
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  @doc """
+  Closes streaming socket of a bridge
+  """
+  @spec close_streaming(Bridge.t) :: Bridge.t | {:error, atom}
+  def close_streaming(bridge) do
+    case :ssl.close(bridge.socket) do
+      :ok -> update_bridge_socket(nil, bridge)
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   @doc """
@@ -196,6 +230,22 @@ defmodule Huex do
   @spec set_color(Bridge.t, light, xy_color) :: Bridge.t
   def set_color(bridge, light, {x, y}) do
     bridge |> set_state(light, %{on: true, xy: [x, y]})
+  end
+
+  @doc """
+  Sends color data to a open DTLS socket to the Hue bridge.
+
+  Takes light data in the form of [
+    {light_id_1, {r1, g1, b1}}
+    {light_id_2, {r2, g2, b2}}
+    {light_id_3, {r3, g3, b3}}
+  ]
+  """
+  def stream_color(bridge, light_data) do
+    case :ssl.send(bridge.socket, stream_message(light_data)) do
+      :ok -> bridge
+      x -> x
+    end
   end
 
   @doc """
@@ -360,6 +410,15 @@ defmodule Huex do
     bridge |> group_state_url(group) |> put_json(new_state) |> update_bridge(bridge)
   end
 
+  @spec set_group_to_streaming(Bridge.t, group, streaming_active) :: Bridge.t
+  def set_group_to_streaming(bridge, group, streaming_active) do
+    bridge |> group_url(group) |> put_json(%{
+      stream: %{
+        active: streaming_active
+      }
+    }) |> update_bridge(bridge)
+  end
+
 
   # Private API
 
@@ -377,6 +436,10 @@ defmodule Huex do
         %Bridge{bridge | status: :ok, error: nil}
 
     end
+  end
+
+  defp update_bridge_socket(socket, bridge) do
+    %Bridge{bridge | socket: socket}
   end
 
   #
@@ -421,6 +484,48 @@ defmodule Huex do
   defp encode_request(data) do
     {:ok, json} = Poison.encode(data)
     json
+  end
+
+  ### Lower level Erlang routines
+
+  @doc """
+  Erlang level DTLS SSL connection function
+  """
+  @spec open_streaming_dtls(binary, binary, binary) :: {atom, SslSocket.t}
+  def open_streaming_dtls(host, username, clientkey) do
+    {:ok, decoded_key} = Base.decode16(clientkey)
+    {:ok, address} = :inet.parse_address(to_charlist(host))
+
+    # Special lookup function for use in PSK DTLS :ssl invocation.
+    user_lookup = fn (:psk, _identity, key) ->
+      {:ok, key}
+    end
+
+    :ssl.connect(address, 2100, [
+      {:active, true},
+      {:handshake, :full},
+      {:protocol, :dtls},
+      {:psk_identity, username},
+      {:versions, [:"dtlsv1.2"]},
+      {:user_lookup_fun, {user_lookup, decoded_key}},
+      {:verify, :verify_none},
+      {:ciphers,[ # As described in https://github.com/erlang/otp/wiki/Cipher-suite-correspondence-table
+        {:psk, :aes_128_gcm, nil, :sha256}
+      ]}
+    ])
+  end
+
+  # Creates a streaming binary message to send to the Hue bridge streaming port
+  defp stream_message(light_color_list) do
+    Enum.reduce(
+      light_color_list,
+      @streaming_header <> <<0x01, 0x00, 0x00>> <> @streaming_colorspace <> <<0x00>>,
+      fn ({light_id, {r, g, b}}, acc) ->
+        light_id = <<light_id :: size(16)>>
+        light_color = <<r :: size(16)>> <> <<g :: size(16)>> <> <<b :: size(16)>>
+        acc <> @streaming_device_type <> light_id <> light_color
+      end
+    )
   end
 
   # TODO FIXME figure out why HTTPoison always treat the response as an error
